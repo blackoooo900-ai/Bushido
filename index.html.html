@@ -1,0 +1,522 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0F1319">
+<title>掟 — The Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --sumi:#0F1319;      /* ink ground */
+  --kachi:#171E28;     /* kachi-iro panel */
+  --kachi2:#1F2833;
+  --line:#2C3745;
+  --washi:#E9E3D4;     /* paper */
+  --soft:#9BA5B2;
+  --faint:#5E6875;
+  --shu:#C0392B;       /* vermilion seal */
+  --shu-lite:#E05A4A;
+  --kin:#C9A227;       /* gold */
+  --jade:#5F9E86;
+  --r:3px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--sumi);color:var(--washi);
+  font-family:"IBM Plex Sans",-apple-system,system-ui,sans-serif;font-weight:300;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{padding-bottom:96px;max-width:640px;margin:0 auto;
+  padding-top:env(safe-area-inset-top)}
+.jp{font-family:"Zen Old Mincho",serif}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+h1,h2,h3{margin:0;font-weight:400}
+
+/* ── header ─────────────────────────────── */
+header{padding:22px 20px 14px;border-bottom:1px solid var(--line);
+  display:flex;align-items:flex-start;gap:16px}
+.seal{width:78px;height:78px;flex:0 0 78px;position:relative}
+.seal svg{display:block;width:100%;height:100%}
+.seal .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:500;color:var(--washi);
+  text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.head-meta{flex:1;min-width:0;padding-top:2px}
+.phase-kanji{font-size:30px;color:var(--kin);line-height:1;letter-spacing:.06em}
+.phase-name{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--soft);
+  margin-top:7px}
+.phase-sub{font-size:12.5px;color:var(--faint);margin-top:5px}
+.daybar{display:flex;align-items:center;gap:10px;padding:11px 20px;
+  border-bottom:1px solid var(--line);font-size:12.5px;color:var(--soft)}
+.daybar .d{font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+.daybar button{padding:3px 9px;border:1px solid var(--line);border-radius:var(--r);
+  font-size:11px;color:var(--soft)}
+.daybar .spacer{flex:1}
+.mode{display:flex;gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.mode button{padding:4px 10px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint)}
+.mode button.on{background:var(--shu);color:#fff}
+
+/* ── generic ────────────────────────────── */
+.wrap{padding:20px}
+.eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--kin);
+  margin:26px 0 12px;display:flex;align-items:center;gap:11px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+.eyebrow:first-child{margin-top:4px}
+
+/* ── blocks (the day) ───────────────────── */
+.blocks{position:relative;margin-left:4px}
+.blk{display:flex;gap:14px;padding:9px 0;position:relative}
+.blk::before{content:"";position:absolute;left:47px;top:0;bottom:0;width:1px;
+  background:var(--line)}
+.blk:first-child::before{top:18px}
+.blk:last-child::before{bottom:calc(100% - 18px)}
+.blk .t{width:42px;flex:0 0 42px;text-align:right;font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px;color:var(--faint);padding-top:2px}
+.blk .dot{position:absolute;left:43px;top:14px;width:7px;height:7px;border-radius:50%;
+  background:var(--line);border:1px solid var(--sumi);z-index:1}
+.blk.done .dot{background:var(--jade)}
+.blk.now .dot{background:var(--shu);box-shadow:0 0 0 4px rgba(192,57,43,.22)}
+.blk .body{flex:1;padding-left:12px;min-width:0}
+.blk .nm{font-size:14.5px}
+.blk.done .nm{color:var(--soft);text-decoration:line-through;text-decoration-color:var(--faint)}
+.blk .tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  margin-top:2px}
+.blk.now .nm{color:#fff}
+.blk .box{flex:0 0 26px;width:26px;height:26px;margin-top:1px;border:1px solid var(--line);
+  border-radius:var(--r);display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:transparent;transition:.13s}
+.blk.done .box{background:var(--jade);border-color:var(--jade);color:var(--sumi)}
+.blk.free .box{border-style:dashed;opacity:.45}
+
+/* ── checks ─────────────────────────────── */
+.pillar{margin-bottom:20px}
+.pillar-h{display:flex;align-items:baseline;gap:9px;margin-bottom:7px}
+.pillar-h .k{font-size:17px;color:var(--kin)}
+.pillar-h .n{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+.chk{display:flex;align-items:center;gap:12px;padding:8px 2px;border-bottom:1px solid rgba(44,55,69,.5)}
+.chk:last-child{border-bottom:0}
+.chk .box{flex:0 0 24px;width:24px;height:24px;border:1px solid var(--line);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:.13s}
+.chk.done .box{background:var(--jade);border-color:var(--jade);color:var(--sumi)}
+.chk.free .box{border-style:dashed;opacity:.45}
+.chk .nm{flex:1;font-size:14px}
+.chk.done .nm{color:var(--soft)}
+.chk .un{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  border:1px solid var(--line);padding:1px 5px;border-radius:var(--r)}
+
+/* ── cards / stats ──────────────────────── */
+.card{background:var(--kachi);border:1px solid var(--line);border-radius:var(--r);
+  padding:15px 16px;margin-bottom:11px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.stat{background:var(--kachi);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 10px;text-align:center}
+.stat .v{font-family:"IBM Plex Mono",monospace;font-size:21px;font-weight:500;color:var(--kin)}
+.stat .l{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+.bar{height:4px;background:var(--kachi2);border-radius:2px;overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:var(--shu)}
+.grid-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
+.gd{aspect-ratio:1;border-radius:1px;background:var(--kachi2);position:relative}
+.gd .n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--faint)}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:14px}
+.dow span{text-align:center;font-size:9px;letter-spacing:.1em;color:var(--faint)}
+
+/* ── weight ─────────────────────────────── */
+.wt{display:flex;gap:9px;align-items:center;margin-top:11px}
+.wt input{flex:1;background:var(--sumi);border:1px solid var(--line);border-radius:var(--r);
+  color:var(--washi);padding:10px 12px;font-family:"IBM Plex Mono",monospace;font-size:15px}
+.wt button{background:var(--shu);color:#fff;padding:10px 18px;border-radius:var(--r);
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+table.mini{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+table.mini td{padding:7px 0;border-bottom:1px solid rgba(44,55,69,.55)}
+table.mini td:first-child{color:var(--soft)}
+table.mini td:last-child{text-align:right;font-family:"IBM Plex Mono",monospace;color:var(--kin)}
+table.mini tr.past td:last-child{color:var(--faint)}
+
+/* ── goals ──────────────────────────────── */
+.ph{border-left:2px solid var(--line);padding:2px 0 2px 15px;margin-bottom:22px}
+.ph.on{border-left-color:var(--shu)}
+.ph .hd{display:flex;align-items:baseline;gap:10px}
+.ph .k{font-size:22px;color:var(--kin)}
+.ph .nm{font-size:12px;letter-spacing:.24em;text-transform:uppercase}
+.ph .dt{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);margin-top:3px}
+.ph ul{margin:9px 0 0;padding-left:16px;color:var(--soft);font-size:13.5px}
+.ph li{margin-bottom:4px}
+.ph li b{color:var(--washi);font-weight:500}
+
+/* ── code ───────────────────────────────── */
+.vow{text-align:center;padding:26px 18px;border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);margin:10px 0 4px;font-size:15px;line-height:2.1;
+  color:var(--washi)}
+.vow span{color:var(--kin)}
+.virtue{display:flex;gap:15px;padding:15px 0;border-bottom:1px solid rgba(44,55,69,.55)}
+.virtue .k{flex:0 0 44px;font-size:33px;color:var(--shu-lite);line-height:1;text-align:center}
+.virtue .r{flex:1;min-width:0}
+.virtue .nm{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--kin)}
+.virtue .pillar-nm{font-size:15px;margin-top:3px}
+.virtue .pr{font-size:13px;color:var(--soft);margin-top:7px;line-height:1.7}
+.virtue .pr div{padding-left:13px;position:relative}
+.virtue .pr div::before{content:"—";position:absolute;left:0;color:var(--faint)}
+.note{font-size:12.5px;color:var(--faint);line-height:1.7;font-style:italic;margin-top:14px}
+
+/* ── nav ────────────────────────────────── */
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,19,25,.94);
+  backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;
+  padding-bottom:env(safe-area-inset-bottom);max-width:640px;margin:0 auto;z-index:20}
+nav button{flex:1;padding:11px 4px 12px;text-align:center;color:var(--faint)}
+nav button .k{font-size:19px;display:block;line-height:1.25}
+nav button .l{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;margin-top:2px;display:block}
+nav button.on{color:var(--shu-lite)}
+.hide{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header>
+  <div class="seal">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs><clipPath id="cp"><circle cx="50" cy="50" r="41"/></clipPath></defs>
+      <circle cx="50" cy="50" r="41" fill="#1A2029"/>
+      <rect id="fill" x="0" y="100" width="100" height="100" fill="#C0392B" clip-path="url(#cp)"/>
+      <circle cx="50" cy="50" r="41" fill="none" stroke="#C0392B" stroke-width="4"/>
+    </svg>
+    <div class="pct" id="pct">0%</div>
+  </div>
+  <div class="head-meta">
+    <div class="phase-kanji jp" id="phK">鉄</div>
+    <div class="phase-name" id="phN">THE IRON</div>
+    <div class="phase-sub" id="phS"></div>
+  </div>
+</header>
+
+<div class="daybar">
+  <button onclick="shift(-1)">‹</button>
+  <span class="d" id="dLabel"></span>
+  <button onclick="shift(1)">›</button>
+  <span class="spacer"></span>
+  <div class="mode">
+    <button id="mW" onclick="setMode('week')">Week</button>
+    <button id="mE" onclick="setMode('end')">Rest</button>
+    <button id="mF" onclick="setMode('floor')">Floor</button>
+  </div>
+</div>
+
+<main>
+  <section id="v-today" class="wrap"></section>
+  <section id="v-record" class="wrap hide"></section>
+  <section id="v-goals" class="wrap hide"></section>
+  <section id="v-code" class="wrap hide"></section>
+</main>
+
+<nav>
+  <button id="n-today"  class="on" onclick="go('today')"><span class="k jp">今</span><span class="l">Today</span></button>
+  <button id="n-record" onclick="go('record')"><span class="k jp">録</span><span class="l">Record</span></button>
+  <button id="n-goals"  onclick="go('goals')"><span class="k jp">道</span><span class="l">Path</span></button>
+  <button id="n-code"   onclick="go('code')"><span class="k jp">掟</span><span class="l">Code</span></button>
+</nav>
+
+<script>
+/* ══════════ STORAGE ══════════
+   Uses the host storage API when present, otherwise the browser's own.
+   Same data model either way. */
+const DB={
+  async get(k){
+    try{ if(window.storage){const r=await window.storage.get(k);return r?JSON.parse(r.value):null;} }catch(e){}
+    try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}
+  },
+  async set(k,v){
+    const s=JSON.stringify(v);
+    try{ if(window.storage){await window.storage.set(k,s);return;} }catch(e){}
+    try{localStorage.setItem(k,s);}catch(e){}
+  }
+};
+const KEY='bushido-v1';
+let D={days:{},weights:{},gold:{}};   // days[date]={m:mode, c:{id:1}}
+
+/* ══════════ CALENDAR ══════════ */
+const PHASES=[
+  {k:'鉄',n:'THE IRON',   s:'2026-08-25',e:'2026-11-30',line:'Hold the line. Nothing new.'},
+  {k:'刃',n:'THE BLADE',  s:'2026-12-01',e:'2027-02-28',line:'The credential and the body.'},
+  {k:'築',n:'THE BUILDING',s:'2027-03-01',e:'2027-05-31',line:'Build the thing you can show.'},
+  {k:'場',n:'THE FIELD',  s:'2027-06-01',e:'2027-08-31',line:'Go out and be seen.'}
+];
+const WEIGHT={'2026-08':122,'2026-09':116,'2026-10':110,'2026-11':104,'2026-12':99,
+  '2027-01':95,'2027-02':92,'2027-03':90,'2027-04':88,
+  '2027-05':88,'2027-06':88,'2027-07':88,'2027-08':88};
+const STUDY={'2026-08':60,'2026-09':30,'2026-10':60,'2026-11':90,'2026-12':120,
+  '2027-01':120,'2027-02':90,'2027-03':120,'2027-04':90,
+  '2027-05':120,'2027-06':120,'2027-07':60,'2027-08':60};
+
+/* ══════════ ITEMS ══════════
+   ph = phase it becomes scored (1–4). floor = counts on a floor day. */
+const P={self:['克','SELF'],body:['勇','BODY'],faith:['忠','FAITH'],reset:['禁','RESET'],
+  mind:['誠','MIND'],craft:['名','CRAFT'],money:['義','WEALTH'],house:['仁','HOUSE'],people:['礼','PEOPLE']};
+
+const ITEMS=[
+ // id, name, pillar, type, phase, floor, time(week), time(rest), unit
+ {id:'sleep', n:'Sleep on time',        p:'self', t:'check', ph:1, fl:1, tw:'22:30', te:'23:00'},
+ {id:'wake',  n:'Wake 05:00',           p:'self', t:'check', ph:2, tw:'05:00', te:'07:00'},
+ {id:'train', n:'Training session',     p:'body', t:'block', ph:1, tw:'05:30', te:'08:00'},
+ {id:'walk',  n:'Daily walk',           p:'body', t:'block', ph:1, fl:1, tw:'20:00', te:'17:00'},
+ {id:'food',  n:'Food kept / IF',       p:'body', t:'check', ph:1, fl:1},
+ {id:'supp',  n:'Supplements',          p:'body', t:'check', ph:2},
+ {id:'fajr',  n:'Fajr on time',         p:'faith',t:'check', ph:1, fl:1, tw:'05:00', te:'05:00'},
+ {id:'dhuhr', n:'Dhuhr on time',        p:'faith',t:'check', ph:2, tw:'12:00', te:'12:00'},
+ {id:'asr',   n:'Asr on time',          p:'faith',t:'check', ph:2, tw:'15:20', te:'15:20'},
+ {id:'magh',  n:'Maghrib on time',      p:'faith',t:'check', ph:2, tw:'18:45', te:'18:45'},
+ {id:'isha',  n:'Isha on time',         p:'faith',t:'check', ph:2, tw:'20:15', te:'20:15'},
+ {id:'quran', n:'Quran',                p:'faith',t:'block', ph:3, tw:'21:30', te:'10:00'},
+ {id:'noP',   n:'No P',                 p:'reset',t:'check', ph:1, fl:1},
+ {id:'noM',   n:'No M',                 p:'reset',t:'check', ph:1, fl:1},
+ {id:'course',n:'Reset course',         p:'reset',t:'block', ph:2, tw:'21:00', te:'11:00'},
+ {id:'work',  n:'Protected work block', p:'craft',t:'block', ph:1, tw:'08:30'},
+ {id:'study', n:'Study block',          p:'craft',t:'block', ph:1, tw:'15:30', te:'10:00'},
+ {id:'read',  n:'Reading',              p:'mind', t:'block', ph:2, tw:'21:45', te:'21:45'},
+ {id:'draw',  n:'Drawing',              p:'mind', t:'block', ph:3, te:'16:00'},
+ {id:'clean', n:'Deep clean',           p:'mind', t:'block', ph:3, te:'13:00'},
+ {id:'kid',   n:'Time with your daughter',p:'house',t:'block',ph:3, tw:'17:00', te:'15:00'},
+ {id:'out',   n:'One outing / a person', p:'people',t:'block',ph:4, te:'19:00'},
+ {id:'spend', n:'No waste spend',       p:'money',t:'check', ph:3},
+ {id:'own',   n:'Own time — PS or out', p:'self', t:'block', ph:0, tw:'19:00', te:'20:00'},
+ {id:'sh1',   n:'Shower',               p:'self', t:'check', ph:4},
+ {id:'br1',   n:'Brush — morning',      p:'self', t:'check', ph:4},
+ {id:'br2',   n:'Brush — night',        p:'self', t:'check', ph:4},
+ {id:'skin',  n:'Skin care',            p:'self', t:'check', ph:4},
+ {id:'hair1', n:'Hair treatment 1',     p:'self', t:'check', ph:4},
+ {id:'hair2', n:'Hair treatment 2',     p:'self', t:'check', ph:4},
+ {id:'gel',   n:'Nose gel',             p:'self', t:'check', ph:4}
+];
+
+/* ══════════ STATE ══════════ */
+let cur=new Date(); let view='today';
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const ym=d=>iso(d).slice(0,7);
+const phaseOf=d=>{const s=iso(d);for(let i=0;i<4;i++)if(s>=PHASES[i].s&&s<=PHASES[i].e)return i+1;return s<PHASES[0].s?1:4;};
+const defMode=d=>{const w=d.getDay();return (w===5||w===6)?'end':'week';};
+const dayRec=d=>{const k=iso(d);if(!D.days[k])D.days[k]={m:defMode(d),c:{}};return D.days[k];};
+const modeOf=d=>dayRec(d).m;
+
+function scored(d){
+  const ph=phaseOf(d), m=modeOf(d);
+  return ITEMS.filter(it=>{
+    if(!it.ph) return false;
+    if(m==='floor') return !!it.fl;
+    if(m==='end'&&(it.id==='work')) return false;
+    if(m==='week'&&(it.id==='clean'||it.id==='out'||it.id==='draw')) return false;
+    return it.ph<=ph;
+  });
+}
+function score(d){
+  const s=scored(d), rec=dayRec(d);
+  const done=s.filter(it=>rec.c[it.id]).length;
+  return {done,total:s.length,pct:s.length?Math.round(done/s.length*100):0};
+}
+function toggle(id){const r=dayRec(cur);r.c[id]=r.c[id]?0:1;save();render();}
+function setMode(m){dayRec(cur).m=m;save();render();}
+function shift(n){cur.setDate(cur.getDate()+n);render();}
+function save(){DB.set(KEY,D);}
+
+/* ══════════ RENDER ══════════ */
+function render(){
+  const ph=phaseOf(cur), P4=PHASES[ph-1], sc=score(cur);
+  document.getElementById('phK').textContent=P4.k;
+  document.getElementById('phN').textContent=P4.n;
+  document.getElementById('phS').textContent=P4.line;
+  document.getElementById('pct').textContent=sc.pct+'%';
+  document.getElementById('fill').setAttribute('y',100-sc.pct);
+  const t=new Date(); const isT=iso(t)===iso(cur);
+  document.getElementById('dLabel').textContent=(isT?'Today · ':'')+
+    cur.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  ['week','end','floor'].forEach(m=>{
+    document.getElementById({week:'mW',end:'mE',floor:'mF'}[m]).classList.toggle('on',modeOf(cur)===m);});
+  ({today:rToday,record:rRecord,goals:rGoals,code:rCode})[view]();
+}
+
+function rToday(){
+  const rec=dayRec(cur), ph=phaseOf(cur), m=modeOf(cur);
+  const inSet=new Set(scored(cur).map(i=>i.id));
+  const now=new Date(), nowMin=now.getHours()*60+now.getMinutes(), isT=iso(now)===iso(cur);
+
+  const blocks=ITEMS.filter(i=>i.t==='block').map(i=>({...i,at:m==='end'?(i.te||i.tw):(i.tw||i.te)}))
+    .filter(i=>i.at && (m!=='floor'||i.fl) && (!i.ph||i.ph<=ph||i.id==='own'))
+    .sort((a,b)=>a.at.localeCompare(b.at));
+
+  let cIdx=-1;
+  if(isT){blocks.forEach((b,i)=>{const [h,mi]=b.at.split(':').map(Number);if(h*60+mi<=nowMin)cIdx=i;});}
+
+  let h='<div class="eyebrow">The day</div><div class="blocks">';
+  blocks.forEach((b,i)=>{
+    const done=rec.c[b.id], free=!inSet.has(b.id);
+    h+=`<div class="blk ${done?'done':''} ${i===cIdx?'now':''} ${free?'free':''}">
+      <div class="t">${b.at}</div><div class="dot"></div>
+      <div class="body"><div class="nm">${b.n}</div>${free?'<div class="tag">not scored yet</div>':''}</div>
+      <button class="box" onclick="toggle('${b.id}')" aria-label="${b.n}">✓</button></div>`;
+  });
+  h+='</div>';
+
+  h+='<div class="eyebrow">The list</div>';
+  const order=['faith','body','reset','craft','mind','house','people','money','self'];
+  order.forEach(pk=>{
+    const list=ITEMS.filter(i=>i.p===pk&&i.id!=='own'&&(m!=='floor'||i.fl));
+    if(!list.length)return;
+    h+=`<div class="pillar"><div class="pillar-h"><span class="k jp">${P[pk][0]}</span><span class="n">${P[pk][1]}</span></div>`;
+    list.forEach(i=>{
+      const done=rec.c[i.id], free=!inSet.has(i.id);
+      h+=`<div class="chk ${done?'done':''} ${free?'free':''}">
+        <button class="box" onclick="toggle('${i.id}')" aria-label="${i.n}">✓</button>
+        <span class="nm">${i.n}</span>${free?'<span class="un">later</span>':''}</div>`;
+    });
+    h+='</div>';
+  });
+
+  const sc=score(cur);
+  h+=`<div class="card" style="margin-top:18px"><div style="display:flex;justify-content:space-between;font-size:13px">
+    <span style="color:var(--soft)">${m==='floor'?'Floor day — five things':'Scored today'}</span>
+    <span style="font-family:'IBM Plex Mono',monospace;color:var(--kin)">${sc.done} / ${sc.total}</span></div>
+    <div class="bar"><i style="width:${sc.pct}%"></i></div></div>`;
+  document.getElementById('v-today').innerHTML=h;
+}
+
+function rRecord(){
+  const M=ym(cur), y=+M.slice(0,4), mo=+M.slice(5,7);
+  const days=new Date(y,mo,0).getDate(), first=new Date(y,mo-1,1).getDay();
+  let tot=0,cnt=0,full=0,streak=0;
+  for(let i=1;i<=days;i++){const d=new Date(y,mo-1,i);if(iso(d)>iso(new Date()))break;
+    const s=score(d);if(D.days[iso(d)]){tot+=s.pct;cnt++;if(s.pct===100)full++;}}
+  let probe=new Date();
+  while(true){const s=score(probe);if(D.days[iso(probe)]&&s.pct>=100){streak++;probe.setDate(probe.getDate()-1);}else break;}
+
+  const ph=phaseOf(cur),PH=PHASES[ph-1];
+  const pStart=new Date(PH.s),pEnd=new Date(PH.e);
+  const elapsed=Math.max(0,Math.round((new Date()-pStart)/864e5)),len=Math.round((pEnd-pStart)/864e5)+1;
+
+  let h=`<div class="stat-row">
+    <div class="stat"><div class="v">${cnt?Math.round(tot/cnt):0}%</div><div class="l">Month avg</div></div>
+    <div class="stat"><div class="v">${streak}</div><div class="l">Streak</div></div>
+    <div class="stat"><div class="v">${full}</div><div class="l">Full days</div></div></div>`;
+
+  h+=`<div class="card"><div style="display:flex;justify-content:space-between;font-size:13px">
+    <span style="color:var(--soft)">${PH.n} — day ${Math.min(Math.max(elapsed,0),len)} of ${len}</span>
+    <span style="font-family:'IBM Plex Mono',monospace;color:var(--kin)">${Math.round(Math.min(Math.max(elapsed/len,0),1)*100)}%</span></div>
+    <div class="bar"><i style="width:${Math.round(Math.min(Math.max(elapsed/len,0),1)*100)}%"></i></div></div>`;
+
+  h+=`<div class="eyebrow">${new Date(y,mo-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'})}</div>
+    <div class="dow">${['S','M','T','W','T','F','S'].map(x=>'<span>'+x+'</span>').join('')}</div><div class="grid-days">`;
+  for(let i=0;i<first;i++)h+='<div></div>';
+  for(let i=1;i<=days;i++){
+    const d=new Date(y,mo-1,i),s=score(d),has=!!D.days[iso(d)];
+    const a=has?(0.14+0.86*s.pct/100):0.14;
+    const col=has&&s.pct>=100?'var(--jade)':`rgba(192,57,43,${a})`;
+    h+=`<div class="gd" style="background:${col}"><span class="n">${i}</span></div>`;
+  }
+  h+='</div>';
+
+  const wk=D.weights[iso(cur)]||'';
+  h+=`<div class="eyebrow">Weight</div><div class="card">
+    <div style="font-size:12.5px;color:var(--soft)">Target end of ${new Date(y,mo-1,1).toLocaleDateString('en-GB',{month:'long'})}
+      — <b style="color:var(--kin);font-family:'IBM Plex Mono',monospace">${WEIGHT[M]||88} kg</b></div>
+    <div class="wt"><input id="wIn" type="number" step="0.1" inputmode="decimal" placeholder="kg" value="${wk}">
+      <button onclick="logW()">Log</button></div>
+    <table class="mini">${Object.keys(WEIGHT).map(k=>{
+      const past=k<ym(new Date()), me=k===M;
+      const got=Object.keys(D.weights).filter(x=>x.slice(0,7)===k).sort().pop();
+      return `<tr class="${past&&!me?'past':''}"><td>${new Date(k+'-01').toLocaleDateString('en-GB',{month:'short',year:'2-digit'})}</td>
+        <td>${got?D.weights[got]+' / ':''}${WEIGHT[k]} kg</td></tr>`;}).join('')}</table></div>`;
+
+  h+=`<div class="eyebrow">Study minutes</div><div class="card">
+    <div style="font-size:13px;color:var(--soft)">This month's block — <b style="color:var(--kin);font-family:'IBM Plex Mono',monospace">${STUDY[M]||60} min/day</b></div>
+    <div class="note">Low output early is fine. What you're building in the first months is the ability to sit down, not the syllabus.</div></div>`;
+
+  const goldM=Object.keys(WEIGHT).indexOf(M);
+  h+=`<div class="eyebrow">Gold</div><div class="card">
+    <div style="display:flex;justify-content:space-between;font-size:13px">
+      <span style="color:var(--soft)">3 pounds a month, buffer first</span>
+      <span style="font-family:'IBM Plex Mono',monospace;color:var(--kin)">${7+3*(goldM+1)} by month end</span></div>
+    <div class="note">Seven now. Forty-three by August if the rate holds.</div></div>`;
+
+  document.getElementById('v-record').innerHTML=h;
+}
+
+function logW(){const v=parseFloat(document.getElementById('wIn').value);
+  if(!isNaN(v)){D.weights[iso(cur)]=v;save();render();}}
+
+const GOALS=[
+ {i:1,items:[
+  ['Body','124 → <b>104 kg</b>. Front-loaded: 8, 6, 6.'],
+  ['Craft','FMVA finished — hard cutoff 15 Sept. Then the study block is daily and it belongs to CMA.'],
+  ['Work','Close what is open. Audit signed, Cactus at breakeven, KBM governance running clean.'],
+  ['Reset','90 unbroken days.'],
+  ['Faith','Fajr on time. Nothing else scored — it carries the morning.'],
+  ['Wealth','3 gold pounds a month. Buffer untouched.'],
+  ['Mind','Nothing. This is the pillar that buys slack for the others.']]},
+ {i:2,items:[
+  ['Body','→ <b>92 kg</b>.'],
+  ['Craft','<b>CMA Part 1 passed.</b> Move the sitting to late February if the ramp has not held by mid-October.'],
+  ['Work','FY2026 close across the entities. Odoo landed.'],
+  ['Reset','180 days.'],
+  ['Faith','All five, scored.'],
+  ['Wealth','December reassessment — raise the rate or hold it.'],
+  ['Mind','Reading returns. Manga is a fine way in; a fixed stopping point is the whole trick.']]},
+ {i:3,items:[
+  ['Body','→ <b>90 kg</b> by end of March.'],
+  ['Craft','Part 2 syllabus covered.'],
+  ['Work','Build the artifact — one thing that shows group-CFO level, not controller level. The thing you would put in front of someone outside Al Amra.'],
+  ['Reset','Off the count. Settled.'],
+  ['Faith','Five plus Quran daily.'],
+  ['Mind','Drawing. Deep clean at the weekend.'],
+  ['House','A known bad stretch sits in here. Floor days are part of the plan, not a break from it.']]},
+ {i:4,items:[
+  ['Body','Hold 88–90. Stop losing, start building shape.'],
+  ['Craft','<b>CMA complete.</b>'],
+  ['Work','Go external. CV rebuilt, market mapped, conversations started.'],
+  ['Self','The grooming block comes back on the page — unscored, because by now it should be automatic.'],
+  ['People','One outing a week with someone who is not from work.']]}
+];
+function rGoals(){
+  const now=phaseOf(new Date());
+  let h='';
+  PHASES.forEach((p,i)=>{
+    const g=GOALS[i];
+    h+=`<div class="ph ${i+1===now?'on':''}"><div class="hd"><span class="k jp">${p.k}</span><span class="nm">${p.n}</span></div>
+      <div class="dt">${new Date(p.s).toLocaleDateString('en-GB',{month:'short',year:'numeric'})} — ${new Date(p.e).toLocaleDateString('en-GB',{month:'short',year:'numeric'})}${i+1===now?' · now':''}</div>
+      <ul>${g.items.map(x=>`<li><b>${x[0]}.</b> ${x[1]}</li>`).join('')}</ul></div>`;
+  });
+  h+=`<div class="note" style="border-top:1px solid var(--line);padding-top:16px">
+    The tick boxes get you to each gate in better shape. They do not walk you through it. Nothing on this page decides anything for you.</div>`;
+  document.getElementById('v-goals').innerHTML=h;
+}
+
+const VIRTUES=[
+ ['忠','CHŪGI','Loyalty','الدِّين — Faith',['The five, on time, before anything that pays.','A portion of the Book every day, however small.','What is forbidden stays forbidden when it is convenient.']],
+ ['克','KOKKI','Self-command','النَّفْس — Self',['The reset holds. There is no version of this where it is negotiable.','I decided once. I do not decide again at dawn.','A lapse is one day, not the end of the year.']],
+ ['勇','YŪ','Hardness','الجَسَد — Body',['Train on the days I do not want to. Especially those.','I eat like the man at ninety kilos, not the one at a hundred and twenty.','Sleep is not a reward for finishing. It is the first duty of the next day.']],
+ ['仁','JIN','Mercy','الأَهْل — House',['My daughter gets me with the phone down, every day.','I do not carry the day home in my face.','What I owe her does not depend on what her mother and I settle.']],
+ ['義','GI','Rectitude','المَال — Wealth',['No interest, in or out.','The buffer is a wall, not a balance.','Gold on salary day, before anything else is spent.']],
+ ['礼','REI','Bearing','النَّاس — People',['I do not humiliate anyone who cannot answer back.','My word holds when keeping it costs me.','I do not make a promise I do not yet own.']],
+ ['誠','MAKOTO','Truth',  'العَقْل — Mind',['I do not tell myself a story I would not accept from someone else.','I take the warning that runs against my interest more seriously, not less.','The hand does something real: a page, a drawing, a room put right.']],
+ ['名','MEIYO','Honour','الصَّنْعَة — Craft',['I do not take a seat I do not understand.','The work is finished, not merely started.','I build in public what I claim in private.']]
+];
+function rCode(){
+  let h=`<div class="vow jp">一度決めた。<br><span>I decided once.</span><br>
+    夜明けに決め直さない。<br><span>I do not decide again at dawn.</span><br>
+    負うものは気分に依らぬ。<br><span>What I owe does not depend on what I feel.</span></div>
+    <div class="eyebrow">The eight</div>`;
+  VIRTUES.forEach(v=>{
+    h+=`<div class="virtue"><div class="k jp">${v[0]}</div><div class="r">
+      <div class="nm">${v[1]} · ${v[2]}</div><div class="pillar-nm jp">${v[3]}</div>
+      <div class="pr">${v[4].map(x=>'<div>'+x+'</div>').join('')}</div></div></div>`;
+  });
+  h+=`<div class="eyebrow">The door back</div><div class="card">
+    <div style="font-size:13.5px;color:var(--soft);line-height:1.75">A broken day is a broken day. Mark it, say what broke, open the next one on the floor list. The code does not have a clause where you are finished with it.</div></div>
+    <div class="note">Bushidō gave loyalty to a lord who could die. Yours is given to the One who does not — same spine, higher head.</div>`;
+  document.getElementById('v-code').innerHTML=h;
+}
+
+function go(v){view=v;
+  ['today','record','goals','code'].forEach(x=>{
+    document.getElementById('v-'+x).classList.toggle('hide',x!==v);
+    document.getElementById('n-'+x).classList.toggle('on',x===v);});
+  render();}
+
+(async()=>{const s=await DB.get(KEY);if(s)D=Object.assign(D,s);render();})();
+</script>
